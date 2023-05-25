@@ -1,0 +1,19 @@
+
+body{
+    /* color: rgb(213, 57, 57); */
+    margin: 0 0 0 0;
+    background-color: #000000;
+}
+
+.not-found{
+    margin-top: 0;
+    padding-top: 0;
+    color: white;
+    width: 100%;
+    min-height: 1024px;
+    background-position: center;
+    background-image: url('/img/404bg_img.jpg');
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+
