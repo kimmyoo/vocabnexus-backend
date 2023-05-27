@@ -18,12 +18,12 @@ const login = asyncHandler(async (req, res) => {
     const foundUser = await User.findOne({ username }).exec()
 
     if (!foundUser) {
-        return res.status(401).json({ message: "unauthorized" })
+        return res.status(401).json({ message: "no user found" })
     }
 
     const match = await bcrypt.compare(password, foundUser.password)
     if (!match) {
-        return res.status(401).json({ message: 'unauthorized' })
+        return res.status(401).json({ message: 'incorrect password' })
     }
 
     // then create access token

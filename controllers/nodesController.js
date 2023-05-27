@@ -3,22 +3,34 @@ const Nexus = require('../models/Nexus')
 // const User = require('../models/User')
 const asyncHandler = require('express-async-handler')
 const utility = require('../controllers/utility.js')
+const { v4: uuidv4 } = require('uuid');
 // const expressAsyncHandler = require('express-async-handler')
 
 /**   */
 // @DESC:  get all nodes belong to a specific user
 // @PATH   /nodes
 const getAllNodes = asyncHandler(async (req, res) => {
-    const { user } = req.body
+    const { userId } = req.params
+    const user = userId
     if (!user) {
         return res.status(400).json({ message: "need user id" })
     }
     const nodes = await Node.find({ user }).lean().sort({ 'word': 1 })
-    // console.log(user)
+    // console.log(nodes)
     if (!nodes?.length) {
         return res.status(400).json({ message: "you have not added a words yet" })
     }
-    res.json(nodes)
+    // group nodes alphabetically
+    const groupedNodes = {}
+    for (const node of nodes) {
+        const firstLetter = node.word[0].toLowerCase();
+        if (!groupedNodes[firstLetter]) {
+            groupedNodes[firstLetter] = [];
+        }
+        groupedNodes[firstLetter].push(node);
+    }
+    // res.json(nodes)
+    res.json(groupedNodes)
 })
 
 
@@ -111,28 +123,56 @@ const getNodeDetail = asyncHandler(async (req, res) => {
 })
 
 
-const updateWordOnly = asyncHandler(async (req, res) => {
-    const { id, user, word } = req.body
-    // console.log(id, user, word)
-    // some data integrity check
-    if (!id || !user || !word) {
+const updateNode = asyncHandler(async (req, res) => {
+    const { user, node } = req.body
+    const { word, meanings } = node
+
+    // convert buffer type typeArray to uuid
+    // chatGPT's credit
+    meanings.forEach(meaning => {
+        const byteArray = meaning.meaningId.data
+        const stringMeaningId = uuidv4({ random: byteArray })
+        meaning.meaningId = stringMeaningId
+    })
+
+    if (!user || !word) {
         return res.status(400).json({ message: "missing field!" })
     }
-    const node = await Node.findById(id).exec()
-    if (!node) {
+    const originalNode = await Node.findById(node._id).exec()
+    if (!originalNode) {
         return res.status(400).json({ message: "node not found" })
     }
-    console.log(node.user, user)
     // cannot compare ObjectId to string
-    if (node.user.toString() !== user) {
+    if (originalNode.user.toString() !== user) {
         return res.status(403).json({ messsage: "unauthorized, this is not your word" })
     }
-    const originalWord = node.word
-    node.word = word
-    const updatedNode = await node.save()
-    res.json(`${originalWord} is updated to ${updatedNode.word} `)
-
+    originalNode.word = word
+    originalNode.meanings = meanings
+    await originalNode.save()
+    res.json({ message: "node is updated" })
 })
+
+// const updateWordOnly = asyncHandler(async (req, res) => {
+//     const { id, user, word } = req.body
+//     // console.log(id, user, word)
+//     // some data integrity check
+//     if (!id || !user || !word) {
+//         return res.status(400).json({ message: "missing field!" })
+//     }
+//     const node = await Node.findById(id).exec()
+//     if (!node) {
+//         return res.status(400).json({ message: "node not found" })
+//     }
+//     console.log(node.user, user)
+//     // cannot compare ObjectId to string
+//     if (node.user.toString() !== user) {
+//         return res.status(403).json({ messsage: "unauthorized, this is not your word" })
+//     }
+//     const originalWord = node.word
+//     node.word = word
+//     const updatedNode = await node.save()
+//     res.json(`${originalWord} is updated to ${updatedNode.word} `)
+// })
 
 // meaning: add, delete, edit
 const addMeaning = asyncHandler(async (req, res) => {
@@ -285,7 +325,8 @@ module.exports = {
     addNewNode,
     deleteNode,
     getNodeDetail,
-    updateWordOnly,
+    // updateWordOnly,
+    updateNode,
     addMeaning,
     updateMeaning,
     deleteMeaning,

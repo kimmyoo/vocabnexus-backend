@@ -8,16 +8,19 @@ router.use(verifyJWT)
 
 
 router.route('/')
-    .get(nodesController.getAllNodes)
+    // .get(nodesController.getAllNodes)
     .post(nodesController.addNewNode) //adding word at the same time
     .delete(nodesController.deleteNode)
+
+router.route('/:userId')
+    .get(nodesController.getAllNodes)
 
 router.route('/detail/:userId/:id')
     .get(nodesController.getNodeDetail)
 
-router.route('/word')
+router.route('/update')
     // patch is partially update
-    .patch(nodesController.updateWordOnly)
+    .patch(nodesController.updateNode)
 
 router.route('/word/liked')
     .patch(nodesController.toggleLiked)
