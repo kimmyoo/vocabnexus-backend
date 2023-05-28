@@ -11,6 +11,10 @@ router.route('/:userId/:id')
 
 router.route('/')
     .post(nexusController.addOutboundNexus)
+
+
+// userId/nodeId/nexusId
+router.route('/:user/:id/:nexusId')
     .delete(nexusController.deleteOutboundNexus)
 // patch option is not really needed
 // since user can always delete nexus and reconnect

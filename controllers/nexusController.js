@@ -94,7 +94,7 @@ const addOutboundNexus = asyncHandler(async (req, res) => {
     if (!nexus) {
         return res.status(400).json({ message: "nexus creation failed" })
     }
-    // async helper function to change user level. 
+    // async helper function to change user level.
     await utility._monitorUserLevel(user)
     // push nexus to both nodes
     nodeFrom.nexus.push(nexus)
@@ -111,7 +111,7 @@ const addOutboundNexus = asyncHandler(async (req, res) => {
 // delete single nexus object from current node
 // and remove nexusId from both ends.
 const deleteOutboundNexus = asyncHandler(async (req, res) => {
-    const { id, user, nexusId } = req.body
+    const { id, user, nexusId } = req.params
     if (!id || !user) {
         return res.status(400).json({ message: "missing required fields" })
     }
@@ -127,6 +127,8 @@ const deleteOutboundNexus = asyncHandler(async (req, res) => {
             if (currentNode.user.toString() !== user) {
                 return res.status(403).json({ messsage: "unauthorized! this is not your word" })
             }
+            // nested try catch block ugly but really needed it so i can know 
+            // which part of failed: finding node or deletion of nexus
             try {
                 // remove nexusId from both nodes
                 currentNode.nexus.pull(nexus.id)

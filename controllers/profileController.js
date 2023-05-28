@@ -30,13 +30,13 @@ const getUserProfile = asyncHandler(async (req, res) => {
         const numOfNexus = await Nexus.countDocuments({ user: user._id })
         userProfileData.numOfNexus = numOfNexus
 
-        const likedList = await Node.find({ user: user._id, liked: true }).sort({ 'createdAt': -1 }).limit(8)
+        const likedList = await Node.find({ user: user._id, liked: true }).sort({ 'createdAt': -1 })
         userProfileData.likedList = likedList
 
-        const unGraspedList = await Node.find({ user: user._id, grasped: false }).sort({ 'createdAt': 1 }).limit(8)
+        const unGraspedList = await Node.find({ user: user._id, grasped: false }).sort({ 'createdAt': 1 })
         userProfileData.unGraspedList = unGraspedList
 
-        const unconnctedList = await Node.find({ nexus: { $size: 0 } }).limit(8)
+        const unconnctedList = await Node.find({ nexus: { $size: 0 } })
         userProfileData.unconnctedList = unconnctedList
 
         res.json(userProfileData)
