@@ -55,12 +55,12 @@ const addNewNode = asyncHandler(async (req, res) => {
 
 
 const deleteNode = asyncHandler(async (req, res) => {
-    const { id, user } = req.body
-    if (!user || !id) {
+    const { id, userId } = req.params
+    if (!userId || !id) {
         return res.status(400).json({ message: "user and node info is required" })
     }
     const currentNode = await Node.findById(id).exec()
-    if (currentNode.user.toString() !== user) {
+    if (currentNode.user.toString() !== userId) {
         return res.status(403).json({ messsage: "unauthorized, this is not your word" })
     }
     // get all connections and prepare for deletion
@@ -100,7 +100,7 @@ const deleteNode = asyncHandler(async (req, res) => {
     }
     // finally delete the node itself
     await Node.deleteOne({ _id: id })
-    await utility._monitorUserLevel(user)
+    await utility._monitorUserLevel(userId)
     return res.json({ message: `Nexus node is successfully deleted` })
 })
 

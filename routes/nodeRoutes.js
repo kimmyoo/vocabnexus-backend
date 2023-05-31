@@ -8,18 +8,16 @@ router.use(verifyJWT)
 
 
 router.route('/')
-    // .get(nodesController.getAllNodes)
     .post(nodesController.addNewNode) //adding word at the same time
-    .delete(nodesController.deleteNode)
 
 router.route('/:userId')
     .get(nodesController.getAllNodes)
 
 router.route('/detail/:userId/:id')
     .get(nodesController.getNodeDetail)
+    .delete(nodesController.deleteNode)
 
 router.route('/update')
-    // patch is partially update
     .patch(nodesController.updateNode)
 
 router.route('/word/liked')
@@ -35,7 +33,5 @@ router.route('/word/meaning')
     .post(nodesController.addMeaning)
     .delete(nodesController.deleteMeaning)
     .patch(nodesController.updateMeaning)
-// .get()
-// .edit()
 
 module.exports = router
