@@ -42,8 +42,8 @@ app.use('/user', require('./routes/profileRoutes'))
 app.use('/nodes', require('./routes/nodeRoutes'))
 app.use('/nexus', require('./routes/nexusRoutes'))
 
-app.get('*', (req, res) => {
-    res.status(404).sendFile(path.join(__dirname, 'views', '404.html'))
+app.get('/*', (req, res) => {
+    res.status(404).sendFile(path.join(__dirname, 'views', 'index.html'))
 })
 
 // mongoose.connection
