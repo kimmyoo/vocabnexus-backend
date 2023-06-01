@@ -36,7 +36,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
         const unGraspedList = await Node.find({ user: user._id, grasped: false }).sort({ 'createdAt': 1 })
         userProfileData.unGraspedList = unGraspedList
 
-        const unconnctedList = await Node.find({ nexus: { $size: 0 } })
+        const unconnctedList = await Node.find({ user: user._id, nexus: { $size: 0 } })
         userProfileData.unconnctedList = unconnctedList
 
         res.json(userProfileData)
