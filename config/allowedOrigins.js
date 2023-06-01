@@ -1,7 +1,10 @@
 const allowedOrigins = [
-    'http://localhost:3000',
-    'http://localhost:3500',
-    'https://www.mysite.com',
+    // disabled for deployment
+    // 'http://localhost:3000',
+    // 'http://localhost:3500',
+
+    // added for deployment 
+    'https://vocab-nexus.onrender.com',
 ]
 
 module.exports = allowedOrigins
