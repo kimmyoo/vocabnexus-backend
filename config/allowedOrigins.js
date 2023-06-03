@@ -3,7 +3,8 @@ const allowedOrigins = [
     // 'http://localhost:3000',
     // 'http://localhost:3500',
 
-    // added for deployment 
+    // added for deployment
+
     'https://vocab-nexus.onrender.com',
 ]
 
