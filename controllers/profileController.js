@@ -7,7 +7,7 @@ const asyncHandler = require('express-async-handler')
 // @route GET /user
 // @access Private
 const getUserProfile = asyncHandler(async (req, res) => {
-    const id = req.params.id
+    const userId = req.user
     const userProfileData = {
         user: null,
         numOfNodes: null,
@@ -16,7 +16,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
         unGraspedList: null,
     }
     try {
-        const user = await User.findOne({ _id: id }).select('-password').lean().exec()
+        const user = await User.findOne({ _id: userId }).select('-password').lean().exec()
         // If no users 
         if (!user) {
             return res.status(400).json({ message: 'No user found' })
@@ -44,9 +44,6 @@ const getUserProfile = asyncHandler(async (req, res) => {
         console.error(err.message)
     }
 })
-
-
-
 
 
 

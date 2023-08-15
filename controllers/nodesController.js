@@ -10,23 +10,26 @@ const { v4: uuidv4 } = require('uuid');
 // @DESC:  get all nodes belong to a specific user
 // @PATH   /nodes
 const getAllNodes = asyncHandler(async (req, res) => {
-    const { userId } = req.params
-    const user = userId
+    // const { userId } = req.params
+    const user = req.user
     if (!user) {
         return res.status(400).json({ message: "need user id" })
     }
-    const nodes = await Node.find({ user }).lean().sort({ 'word': 1 })
+    const nodes = await Node.find({ user }).lean().sort({ 'word': 1 }) // ascending
     // console.log(nodes)
     if (!nodes?.length) {
         return res.status(400).json({ message: "you have not added a words yet" })
     }
     // group nodes alphabetically
-    const groupedNodes = {}
+    const groupedNodes = {} // empty holder
     for (const node of nodes) {
         const firstLetter = node.word[0].toLowerCase();
+        // if never seen a word beginning with firstLetter
+        // initialize an emtpy array
         if (!groupedNodes[firstLetter]) {
             groupedNodes[firstLetter] = [];
         }
+        // if seen before, push word with the same beginning letter to the array
         groupedNodes[firstLetter].push(node);
     }
     // res.json(nodes)
@@ -35,7 +38,8 @@ const getAllNodes = asyncHandler(async (req, res) => {
 
 
 const addNewNode = asyncHandler(async (req, res) => {
-    const { user, word } = req.body
+    const { word } = req.body
+    const user = req.user
     // console.log(user)
     if (!user || !word) {
         return res.status(400).json({ message: "user and word entity are required" })
@@ -55,7 +59,8 @@ const addNewNode = asyncHandler(async (req, res) => {
 
 
 const deleteNode = asyncHandler(async (req, res) => {
-    const { id, userId } = req.params
+    const { id } = req.params
+    const userId = req.user
     if (!userId || !id) {
         return res.status(400).json({ message: "user and node info is required" })
     }
@@ -106,8 +111,8 @@ const deleteNode = asyncHandler(async (req, res) => {
 
 
 const getNodeDetail = asyncHandler(async (req, res) => {
-    // const id = req.params.id
-    const { id, userId } = req.params
+    const { id } = req.params
+    const userId = req.user
     // const { id, user } = req.body
     if (!userId || !id) {
         return res.status(400).json({ message: "user and id are required" })
@@ -124,9 +129,9 @@ const getNodeDetail = asyncHandler(async (req, res) => {
 
 
 const updateNode = asyncHandler(async (req, res) => {
-    const { user, node } = req.body
+    const user = req.user
+    const { node } = req.body
     const { word, meanings } = node
-
     // convert buffer type typeArray to uuid
     // chatGPT's credit
     meanings.forEach(meaning => {
@@ -152,31 +157,11 @@ const updateNode = asyncHandler(async (req, res) => {
     res.json({ message: "node is updated" })
 })
 
-// const updateWordOnly = asyncHandler(async (req, res) => {
-//     const { id, user, word } = req.body
-//     // console.log(id, user, word)
-//     // some data integrity check
-//     if (!id || !user || !word) {
-//         return res.status(400).json({ message: "missing field!" })
-//     }
-//     const node = await Node.findById(id).exec()
-//     if (!node) {
-//         return res.status(400).json({ message: "node not found" })
-//     }
-//     console.log(node.user, user)
-//     // cannot compare ObjectId to string
-//     if (node.user.toString() !== user) {
-//         return res.status(403).json({ messsage: "unauthorized, this is not your word" })
-//     }
-//     const originalWord = node.word
-//     node.word = word
-//     const updatedNode = await node.save()
-//     res.json(`${originalWord} is updated to ${updatedNode.word} `)
-// })
 
 // meaning: add, delete, edit
 const addMeaning = asyncHandler(async (req, res) => {
-    const { id, user, meaning } = req.body
+    const user = req.user
+    const { id, meaning } = req.body
     if (!id || !user || !meaning) {
         return res.status(400).json({ message: "missing field!" })
     }
@@ -262,7 +247,8 @@ const deleteMeaning = asyncHandler(async (req, res) => {
 })
 
 const toggleGrasped = asyncHandler(async (req, res) => {
-    const { id, user, grasped } = req.body
+    const user = req.user
+    const { id, grasped } = req.body
     if (!user || !id || (typeof grasped === "undefined")) {
         return res.status(400).json({ message: "user, node id, and liked value are required" })
     }
@@ -281,7 +267,8 @@ const toggleGrasped = asyncHandler(async (req, res) => {
 })
 
 const toggleLiked = asyncHandler(async (req, res) => {
-    const { id, user, liked } = req.body
+    const user = req.user
+    const { id, liked } = req.body
     // console.log(id, user, liked)
     if (!user || !id || (typeof liked === "undefined")) {
         return res.status(400).json({ message: "user, node id, and liked value are required" })
@@ -301,8 +288,9 @@ const toggleLiked = asyncHandler(async (req, res) => {
 
 
 const searchWord = asyncHandler(async (req, res) => {
-    const { user } = req.body
+    const user = req.user
     const searchQuery = req.query.q
+    // 'i' case insensitive
     const searchRegex = new RegExp(searchQuery, 'i')
     // console.log(searchQuery, user)
     if (!user || !searchQuery) {
@@ -325,7 +313,6 @@ module.exports = {
     addNewNode,
     deleteNode,
     getNodeDetail,
-    // updateWordOnly,
     updateNode,
     addMeaning,
     updateMeaning,

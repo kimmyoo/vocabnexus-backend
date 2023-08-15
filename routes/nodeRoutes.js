@@ -6,25 +6,24 @@ const verifyJWT = require('../middleware/verifyJWT')
 // this applied verifyJWT to all routes
 router.use(verifyJWT)
 
-
+// add a new node
 router.route('/')
     .post(nodesController.addNewNode) //adding word at the same time
-
-router.route('/:userId')
     .get(nodesController.getAllNodes)
 
-router.route('/detail/:userId/:id')
+router.route('/detail/:id')
     .get(nodesController.getNodeDetail)
     .delete(nodesController.deleteNode)
 
+// update node word and meanings 
 router.route('/update')
     .patch(nodesController.updateNode)
 
-router.route('/word/liked')
+router.route('/liked')
     .patch(nodesController.toggleLiked)
-
-router.route('/word/grasped')
+router.route('/grasped')
     .patch(nodesController.toggleGrasped)
+
 
 router.route('/word/search')
     .post(nodesController.searchWord)

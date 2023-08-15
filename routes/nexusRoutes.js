@@ -6,15 +6,15 @@ const verifyJWT = require('../middleware/verifyJWT')
 // this applied verifyJWT to all routes
 router.use(verifyJWT)
 
-router.route('/:userId/:id')
+// :id is nodeId
+router.route('/:id')
     .get(nexusController.getAllNexusOfNode)
 
 router.route('/')
     .post(nexusController.addOutboundNexus)
 
-
 // userId/nodeId/nexusId
-router.route('/:user/:id/:nexusId')
+router.route('/:id/:nexusId')
     .delete(nexusController.deleteOutboundNexus)
 // patch option is not really needed
 // since user can always delete nexus and reconnect

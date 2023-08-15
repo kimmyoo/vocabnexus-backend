@@ -30,23 +30,24 @@ const login = asyncHandler(async (req, res) => {
     const accessToken = jwt.sign(
         {
             "UserInfo": {
-                "username": foundUser.username
+                "username": foundUser.username,
+                "userId": foundUser.id
             }
         },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "1h" }
+        { expiresIn: "30m" }
     )
 
     // console.log(accessToken)
     const refreshToken = jwt.sign(
         { "username": foundUser.username },
         process.env.REFRESH_TOKEN_SECRET,
-        { expiresIn: '2h' }
+        { expiresIn: '7d' }
     )
 
     res.cookie('jwt', refreshToken, {
         httpOnly: true,
-        //you really need to set this to true 
+        //you really need to set secure to true
         // so the httponly cookie can be set in browser(chrome)
         // but in postman testing, remember to delete secure=true in cookie.
         secure: true,

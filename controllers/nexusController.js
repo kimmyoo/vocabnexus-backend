@@ -10,7 +10,8 @@ const utility = require('../controllers/utility.js')
 // @route GET /nexus
 // @access Private
 const getAllNexusOfNode = asyncHandler(async (req, res) => {
-    const { id, userId } = req.params
+    const userId = req.user
+    const { id } = req.params
     if (!id || !userId) {
         return res.status(400).json({ message: "missing required fields" })
     }
@@ -46,7 +47,8 @@ const getAllNexusOfNode = asyncHandler(async (req, res) => {
 
 // imagination or nexus establishment is always outbound
 const addOutboundNexus = asyncHandler(async (req, res) => {
-    const { id, user, word, nexusType, explanation } = req.body
+    const user = req.user
+    const { id, word, nexusType, explanation } = req.body
     if (!id || !user || !word || !nexusType) {
         return res.status(400).json({ message: "missing required fields" })
     }
@@ -111,7 +113,8 @@ const addOutboundNexus = asyncHandler(async (req, res) => {
 // delete single nexus object from current node
 // and remove nexusId from both ends.
 const deleteOutboundNexus = asyncHandler(async (req, res) => {
-    const { id, user, nexusId } = req.params
+    const user = req.user
+    const { id, nexusId } = req.params
     if (!id || !user) {
         return res.status(400).json({ message: "missing required fields" })
     }
