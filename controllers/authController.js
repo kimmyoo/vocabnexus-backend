@@ -40,6 +40,10 @@ const login = asyncHandler(async (req, res) => {
 
     // console.log(accessToken)
     const refreshToken = jwt.sign(
+        // here  only sign username is fine
+        // because this refresh token is in cookie for frontend
+        // which will be used to send back to server
+        // for looking up the user and a new access token will be issued
         { "username": foundUser.username },
         process.env.REFRESH_TOKEN_SECRET,
         { expiresIn: '7d' }
@@ -86,9 +90,12 @@ const refresh = (req, res) => {
             if (!foundUser) return res.status(401).json({ message: "unauthorized" })
             // if nothing goes wrong, issue a new accessToken
             const accessToken = jwt.sign(
+                // don't forget to add userId in UserInfo
+                // since it's used in verifyJWT
                 {
                     "UserInfo": {
-                        "username": foundUser.username
+                        "username": foundUser.username,
+                        "userId": foundUser.id
                     }
                 },
                 process.env.ACCESS_TOKEN_SECRET,
