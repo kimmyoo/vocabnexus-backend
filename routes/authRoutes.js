@@ -10,10 +10,12 @@ router.route('/')
 router.route('/refresh')
     .get(authController.refresh)
 
+router.route('/register')
+    .post(usersController.createNewUser)
+
 router.route('/logout')
     .post(authController.logout)
 
-router.route('/register')
-    .post(usersController.createNewUser)
+
 
 module.exports = router
