@@ -3,7 +3,8 @@ const allowedOrigins = [
     // 'http://localhost:3000',
 
     // added for deployment
-    'https://main--resonant-crumble-8ec1cf.netlify.app',
+    'https://vocabnexus.com/',
+    'https://www.vocabnexus.com',
     'https://vocab-nexus.onrender.com'
 ]
 
